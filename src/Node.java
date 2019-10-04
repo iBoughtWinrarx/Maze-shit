@@ -1,7 +1,8 @@
+import java.util.ArrayDeque;
+
 public class Node {
     public int i;
     public int j;
-    public boolean isWall = false;
     public boolean isBall = false;
     public boolean visited = false;
 

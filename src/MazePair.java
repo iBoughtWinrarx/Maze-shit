@@ -1,111 +1,60 @@
 // Version: 2017120401
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class MazePair {
-//    public int shortestPath(char[][] maze) {
-//        int rows = maze.length;
-//        int cols = maze[0].length;
-//
-//        ArrayDeque<Point> points = new ArrayDeque<>();
-//
-//        for (int i = 1; i < rows - 1; i++) {
-//            for (int j = 1; j < cols - 1; j++) {
-//                if (maze[i][j] == 'r') {
-//                    points.add(new Point(i, j));
-//                }
-//            }
-//        }
-//
-//        System.out.println(points);
-//
-//        int count = 0;
-//        while (true) {
-//            ArrayList<Point> neighbours = new ArrayList<>();
-//            int size = points.size();
-//            for (int m = 0; m < size; m++) {
-//                Point p = points.peekFirst();
-//                int i = p.i;
-//                int j = p.j;
-//                if (maze[i][j] == 'b') {
-//                    return count;
-//                }
-//                maze[i][j] = 'r';
-//                if (maze[i - 1][j] == '.') {
-//                    neighbours.add(new Point(i - 1, j));
-//                }
-//                if (maze[i + 1][j] == '.') {
-//                    neighbours.add(new Point(i + 1, j));
-//                }
-//                if (maze[i][j - 1] == '.') {
-//                    neighbours.add(new Point(i, j - 1));
-//                }
-//                if (maze[i][j + 1] == '.') {
-//                    neighbours.add(new Point(i, j + 1));
-//                }
-//                points.removeFirst();
-//            }
-//            points.addAll(neighbours);
-//            neighbours.clear();
-//            count++;
-//            for (int i = 0; i < rows; i++) {
-//                for (int j = 0; j < cols; j++) {
-//                    System.out.print(maze[i][j]);
-//                }
-//                System.out.println();
-//            }
-//            System.out.println();
-//        }
-//    }
-
     public int shortestPath(char[][] maze) {
         int rows = maze.length;
         int cols = maze[0].length;
-
         Node[][] nodes = new Node[rows][cols];
         ArrayDeque<Node> openSet = new ArrayDeque<>();
-        ArrayList<Node> neighbours = new ArrayList<>();
 
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                Node node = new Node(i, j);
-                if (maze[i][j] == 'o') {
-                    node.isWall = true;
-                } else if (maze[i][j] == 'r') {
-                    node.visited = true;
-                    openSet.add(node);
-                } else if (maze[i][j] == 'b') {
-                    node.isBall = true;
+                Node n = new Node(i, j);
+                char ch = maze[i][j];
+                if (ch == 'o') {
+                    n.visited = true;
+                    nodes[i][j] = n;
+                } else if (ch == 'b') {
+                    n.isBall = true;
+                    nodes[i][j] = n;
+                } else if (ch == 'r') {
+                    n.visited = true;
+                    nodes[i][j] = n;
+                    openSet.add(n);
+                } else {
+                    nodes[i][j] = n;
                 }
-                nodes[i][j] = node;
             }
         }
 
         int count = 0;
         while (!openSet.isEmpty()) {
-            for (Node n : openSet) {
-                if (n.isBall) {
+            ArrayList<Node> neighbours = new ArrayList<>();
+            for (Node node : openSet) {
+                int i = node.i;
+                int j = node.j;
+                if (node.isBall) {
                     return count;
                 }
-                n.visited = true;
-                int i = n.i;
-                int j = n.j;
-                if (!nodes[i - 1][j].isWall && !nodes[i - 1][j].visited) {
+                node.visited = true;
+                if (!nodes[i - 1][j].visited) {
                     neighbours.add(nodes[i - 1][j]);
                 }
-                if (!nodes[i + 1][j].isWall && !nodes[i + 1][j].visited) {
+                if (!nodes[i + 1][j].visited) {
                     neighbours.add(nodes[i + 1][j]);
                 }
-                if (!nodes[i][j - 1].isWall && !nodes[i][j - 1].visited) {
+                if (!nodes[i][j - 1].visited) {
                     neighbours.add(nodes[i][j - 1]);
                 }
-                if (!nodes[i][j + 1].isWall && !nodes[i][j + 1].visited) {
+                if (!nodes[i][j + 1].visited) {
                     neighbours.add(nodes[i][j + 1]);
                 }
                 openSet.removeFirst();
             }
             openSet.addAll(neighbours);
+            neighbours.clear();
             count++;
         }
         return Integer.MAX_VALUE;
